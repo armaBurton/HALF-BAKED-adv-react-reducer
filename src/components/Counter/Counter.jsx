@@ -1,41 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useGrandma } from '../../context/GrandmaProvider';
 import styles from './Counter.css';
 
-const colors = {
-  yellow: 'rgb(236, 222, 153)',
-  green: 'rgb(52, 211, 153)',
-  red: 'rgb(239, 68, 68)',
-};
-
 export default function Counter() {
-  const [count, setCount] = useState(0);
-  const [currentColor, setCurrentColor] = useState(colors.yellow);
+  const { count, increment, decrement, reset, currentColor } = useGrandma();
 
-  useEffect(() => {
-    if (count === 0) {
-      setCurrentColor(colors.yellow);
-    }
-
-    if (count > 0) {
-      setCurrentColor(colors.green);
-    }
-
-    if (count < 0) {
-      setCurrentColor(colors.red);
-    }
-  }, [count]);
-
-  const increment = () => {
-    setCount((prevState) => prevState + 1);
-  };
-
-  const decrement = () => {
-    setCount((prevState) => prevState - 1);
-  };
-
-  const reset = () => {
-    setCount(0);
-  };
+  console.log(count);
 
   return (
     <main className={styles.main}>
@@ -45,7 +14,7 @@ export default function Counter() {
           type="button"
           onClick={increment}
           aria-label="increment"
-          style={{ backgroundColor: colors.green }}
+          style={{ backgroundColor: 'rgb(52, 211, 153)' }}
         >
           Increment
         </button>
@@ -53,7 +22,7 @@ export default function Counter() {
           type="button"
           onClick={decrement}
           aria-label="decrement"
-          style={{ backgroundColor: colors.red }}
+          style={{ backgroundColor: 'rgb(239, 68, 68)' }}
         >
           Decrement
         </button>
@@ -61,7 +30,7 @@ export default function Counter() {
           type="button"
           aria-label="reset"
           onClick={reset}
-          style={{ backgroundColor: colors.yellow }}
+          style={{ backgroundColor: 'rgb(236, 222, 153)' }}
         >
           Reset
         </button>

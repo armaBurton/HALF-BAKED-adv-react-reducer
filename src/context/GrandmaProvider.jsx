@@ -6,70 +6,60 @@ import {
   useState,
 } from 'react';
 
-const initGrandma = [{ type: 'RESET' }];
-
 const colors = {
   yellow: 'rgb(236, 222, 153)',
   green: 'rgb(52, 211, 153)',
   red: 'rgb(239, 68, 68)',
 };
 
-const grandmaReducer = (state, action) => {
-  switch (action.type) {
-    case 'INCREMENT':
-      state = action.payload.count;
-      return state;
-    case 'DECREMENT':
-      state = action.payload.count;
-      return state;
-    case 'RESET':
-      state = action.payload.count;
-      return state;
-    default:
-      throw new Error("I don't know what's going on.");
-  }
-};
+const initGrandma = { color: colors.yellow, count: 0 };
 
 const Grandma = createContext();
 
 export const GrandmaProvider = ({ children }) => {
-  const [count, setCount] = useState(0);
-  const [currentColor, setCurrentColor] = useState(colors.yellow);
+  function handleColor(count) {
+    if (count > 0) return colors.green;
+    if (count < 0) return colors.red;
+    if (count === 0) return colors.yellow;
+  }
+
+  const grandmaReducer = (state, action) => {
+    switch (action.type) {
+      case 'INCREMENT':
+        return {
+          ...state,
+          count: state.count + 1,
+          color: handleColor(state.count + 1),
+        };
+      case 'DECREMENT':
+        return {
+          ...state,
+          count: state.count - 1,
+          color: handleColor(state.count - 1),
+        };
+      case 'RESET':
+        return initGrandma;
+      default:
+        throw new Error("I don't know what's going on.");
+    }
+  };
+
   const [state, dispatch] = useReducer(grandmaReducer, initGrandma);
 
-  useEffect(() => {
-    if (count === 0) {
-      setCurrentColor(colors.yellow);
-    }
-
-    if (count > 0) {
-      setCurrentColor(colors.green);
-    }
-
-    if (count < 0) {
-      setCurrentColor(colors.red);
-    }
-  }, [count]);
-
   const increment = () => {
-    setCount((prev) => prev + 1);
-    dispatch({ type: 'INCREMENT', payload: { count } });
+    dispatch({ type: 'INCREMENT' });
   };
 
   const decrement = () => {
-    setCount((prev) => prev - 1);
-    dispatch({ type: 'DECREMENT', payload: { count } });
+    dispatch({ type: 'DECREMENT' });
   };
 
   const reset = () => {
-    setCount(0);
-    dispatch({ type: 'RESET', payload: { count } });
+    dispatch({ type: 'RESET' });
   };
 
   return (
-    <Grandma.Provider
-      value={{ count, increment, decrement, reset, currentColor }}
-    >
+    <Grandma.Provider value={{ state, increment, decrement, reset }}>
       {children}
     </Grandma.Provider>
   );
@@ -79,7 +69,7 @@ export const useGrandma = () => {
   const grandma = useContext(Grandma);
 
   if (grandma === undefined)
-    throw new Error('useGrandma must be called from within');
+    throw new Error('useGrandma must be called from within a Grandma Provider');
 
   return grandma;
 };

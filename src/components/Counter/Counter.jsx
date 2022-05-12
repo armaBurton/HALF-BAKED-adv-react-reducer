@@ -2,13 +2,11 @@ import { useGrandma } from '../../context/GrandmaProvider';
 import styles from './Counter.css';
 
 export default function Counter() {
-  const { count, increment, decrement, reset, currentColor } = useGrandma();
-
-  console.log(count);
+  const { state, increment, decrement, reset } = useGrandma();
 
   return (
     <main className={styles.main}>
-      <h1 style={{ color: currentColor }}>{count}</h1>
+      <h1 style={{ color: state.color }}>{state.count}</h1>
       <div>
         <button
           type="button"
